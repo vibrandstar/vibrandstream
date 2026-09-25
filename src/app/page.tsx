@@ -34,9 +34,13 @@ export default function Home() {
     agregarAlCarrito,
     eliminarDelCarrito,
     actualizarCantidad,
-    totalCarrito,
     vaciarCarrito,
   } = useCart();
+
+  // Cálculo seguro del total directamente desde los items del carrito
+  const totalCalculado = useMemo(() => {
+    return carrito.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
+  }, [carrito]);
 
   const numeroWhatsApp = "529141384914";
   const clabeNu = "638180000123456789"; // Tu CLABE de Nu México
@@ -121,7 +125,7 @@ Adjunto mi comprobante para que por favor me entreguen el acceso a mi cuenta. ¡
       mensaje += `   Cantidad: ${item.cantidad} | Subtotal: $${item.precio * item.cantidad} MXN\n\n`;
     });
     mensaje += `━━━━━━━━━━━━━━━━━━━━━\n`;
-    mensaje += `💰 *TOTAL A PAGAR: $${totalCarrito} MXN*\n`;
+    mensaje += `💰 *TOTAL A PAGAR: $${totalCalculado} MXN*\n`;
     mensaje += `💳 *Método de pago:* Transferencia SPEI (Nu México)\n\n`;
     mensaje += `¿Me confirmas disponibilidad para realizar la transferencia ahora mismo?`;
 
@@ -131,11 +135,10 @@ Adjunto mi comprobante para que por favor me entreguen el acceso a mi cuenta. ¡
   return (
     <div className="min-h-screen bg-[#050505] text-gray-200 font-sans selection:bg-blue-500/30 w-full overflow-x-hidden relative flex flex-col justify-between antialiased">
       
-      {/* HEADER COMPACTO 100% RESPONSIVE */}
+      {/* HEADER COMPACTO MOBILE-FIRST */}
       <header className="sticky top-0 z-40 bg-[#050505]/95 backdrop-blur-md border-b border-white/[0.08] w-full">
         <div className="w-full max-w-6xl mx-auto px-3 sm:px-6 h-14 flex items-center justify-between gap-2">
           
-          {/* Logo y Nombre */}
           <Link href="/" className="flex items-center gap-2 min-w-0">
             <div className="relative h-6 sm:h-7 w-auto flex items-center shrink-0">
               <img
@@ -152,7 +155,6 @@ Adjunto mi comprobante para que por favor me entreguen el acceso a mi cuenta. ¡
             </span>
           </Link>
 
-          {/* Botones de acción */}
           <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
             <button
               onClick={() => setModalSpeiAbierto(true)}
@@ -190,7 +192,7 @@ Adjunto mi comprobante para que por favor me entreguen el acceso a mi cuenta. ¡
         </div>
       </header>
 
-      {/* CONTENIDO DE LA TIENDA */}
+      {/* CONTENIDO PRINCIPAL */}
       <main className="w-full max-w-6xl mx-auto px-3 sm:px-6 pt-4 sm:pt-8 pb-14 flex-1 space-y-5">
         
         {/* HERO Y BUSCADOR */}
@@ -207,7 +209,6 @@ Adjunto mi comprobante para que por favor me entreguen el acceso a mi cuenta. ¡
             Perfiles privados y cuentas completas con garantía y soporte directo por WhatsApp.
           </p>
 
-          {/* Buscador adaptativo */}
           <div className="pt-1 w-full">
             <div className="relative flex items-center w-full">
               <input
@@ -230,7 +231,7 @@ Adjunto mi comprobante para que por favor me entreguen el acceso a mi cuenta. ¡
           </div>
         </section>
 
-        {/* SELECTOR DE CATEGORÍAS TÁCTIL */}
+        {/* SELECTOR DE CATEGORÍAS */}
         <section className="w-full overflow-x-auto no-scrollbar py-1">
           <div className="flex items-center justify-start sm:justify-center gap-1.5 min-w-max px-0.5">
             {categorias.map((cat) => (
@@ -268,7 +269,6 @@ Adjunto mi comprobante para que por favor me entreguen el acceso a mi cuenta. ¡
                   key={prod.id}
                   className="group relative flex flex-col bg-[#0a0a0a] rounded-xl overflow-hidden border border-white/[0.08] hover:border-white/20 transition-all w-full"
                 >
-                  {/* Imagen y Badge */}
                   <Link
                     href={`/producto/${prod.id}`}
                     className="block relative aspect-square w-full bg-[#121212] overflow-hidden"
@@ -293,7 +293,6 @@ Adjunto mi comprobante para que por favor me entreguen el acceso a mi cuenta. ¡
                     </span>
                   </Link>
 
-                  {/* Detalles */}
                   <div className="p-2 sm:p-3 flex flex-col flex-1 justify-between gap-1.5">
                     <div>
                       <span className="text-[8px] sm:text-[9px] text-gray-500 block truncate font-medium">
@@ -346,12 +345,11 @@ Adjunto mi comprobante para que por favor me entreguen el acceso a mi cuenta. ¡
 
       </main>
 
-      {/* FOOTER 100% RESPONSIVE EN BLOQUES */}
+      {/* FOOTER EN BLOQUES RESPONSIVE */}
       <footer className="border-t border-white/10 bg-[#080808] py-6 w-full text-gray-400">
         <div className="w-full max-w-6xl mx-auto px-3 sm:px-6 space-y-5">
           
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pb-4 border-b border-white/[0.06] text-left">
-            {/* Marca */}
             <div className="space-y-1">
               <span className="font-black text-white text-xs sm:text-sm tracking-wider uppercase">
                 VIBRAND<span className="text-blue-500">STREAM</span>
@@ -361,7 +359,6 @@ Adjunto mi comprobante para que por favor me entreguen el acceso a mi cuenta. ¡
               </p>
             </div>
 
-            {/* Enlaces */}
             <div className="space-y-1 text-xs">
               <span className="text-[10px] font-bold uppercase tracking-wider text-white block">
                 Ayuda y Soporte
@@ -379,7 +376,6 @@ Adjunto mi comprobante para que por favor me entreguen el acceso a mi cuenta. ¡
               </div>
             </div>
 
-            {/* Pago */}
             <div className="bg-white/[0.02] border border-white/5 p-3 rounded-xl space-y-0.5">
               <span className="text-[9px] font-bold uppercase tracking-wider text-blue-400 block">
                 Pago SPEI Oficial
@@ -403,7 +399,7 @@ Adjunto mi comprobante para que por favor me entreguen el acceso a mi cuenta. ¡
         </div>
       </footer>
 
-      {/* MODAL SPEI ADAPTADO A MÓVIL */}
+      {/* MODAL SPEI */}
       {modalSpeiAbierto && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/80 backdrop-blur-sm">
           <div className="w-full max-w-xs sm:max-w-sm bg-[#0e0e0e] border border-white/10 rounded-2xl p-4 sm:p-5 shadow-2xl relative">
@@ -466,7 +462,7 @@ Adjunto mi comprobante para que por favor me entreguen el acceso a mi cuenta. ¡
         </div>
       )}
 
-      {/* DRAWER CARRITO */}
+      {/* DRAWER DEL CARRITO */}
       {carritoAbierto && (
         <div className="fixed inset-0 z-50 flex justify-end bg-black/80 backdrop-blur-sm">
           <div className="w-full max-w-xs sm:max-w-sm bg-[#0a0a0a] border-l border-white/10 h-full flex flex-col justify-between p-4 shadow-2xl">
@@ -536,7 +532,7 @@ Adjunto mi comprobante para que por favor me entreguen el acceso a mi cuenta. ¡
               <div className="border-t border-white/10 pt-3 space-y-2">
                 <div className="flex justify-between items-center text-xs">
                   <span className="text-gray-400 font-bold uppercase">Total:</span>
-                  <span className="text-base font-black text-white">${totalCarrito} MXN</span>
+                  <span className="text-base font-black text-white">${totalCalculado} MXN</span>
                 </div>
 
                 <button
