@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { db, auth } from "@/lib/firebase";
+import { db, auth, storage } from "@/lib/firebase";
 import {
   collection,
   getDocs,
@@ -16,6 +16,7 @@ import {
   onAuthStateChanged,
   User,
 } from "firebase/auth";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 interface Producto {
   id: string;
@@ -56,9 +57,12 @@ export default function AdminPage() {
   const [disponible, setDisponible] = useState(true);
   const [destacado, setDestacado] = useState(false);
 
+  // Estado para la subida de imagen directa
+  const [subiendoImagen, setSubiendoImagen] = useState(false);
+  const [progresoSubida, setProgresoSubida] = useState<number>(0);
+
   const categoriasDisponibles = ["Perfil", "Completa", "Música", "Herramientas"];
 
-  // Escuchar si hay sesión activa
   useEffect(() => {
     const desuscribir = onAuthStateChanged(auth, (userActual) => {
       setUsuario(userActual);
@@ -105,6 +109,45 @@ export default function AdminPage() {
     }
   };
 
+  const handleSubirArchivo = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validación básica de imagen
+    if (!file.type.startsWith("image/")) {
+      alert("Por favor selecciona un archivo de imagen válido (PNG, JPG, WEBP).");
+      return;
+    }
+
+    setSubiendoImagen(true);
+    setProgresoSubida(0);
+
+    const nombreLimpio = file.name.replace(/[^a-zA-Z0-9.]/g, "_");
+    const rutaArchivo = `productos/${Date.now()}_${nombreLimpio}`;
+    const storageRef = ref(storage, rutaArchivo);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progreso = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+        setProgresoSubida(progreso);
+      },
+      (error) => {
+        console.error("Error al subir a Firebase Storage:", error);
+        alert("Error al subir la imagen. Revisa las reglas de Firebase Storage.");
+        setSubiendoImagen(false);
+      },
+      async () => {
+        const urlDescarga = await getDownloadURL(uploadTask.snapshot.ref);
+        setImagenUrl(urlDescarga);
+        setSubiendoImagen(false);
+      }
+    );
+  };
+
   const limpiarFormulario = () => {
     setEditandoId(null);
     setNombre("");
@@ -116,6 +159,7 @@ export default function AdminPage() {
     setImagenUrl("");
     setDisponible(true);
     setDestacado(false);
+    setProgresoSubida(0);
   };
 
   const prepararEdicion = (prod: Producto) => {
@@ -135,7 +179,7 @@ export default function AdminPage() {
   const guardarProducto = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nombre || precio === "" || !imagenUrl) {
-      alert("Por favor completa nombre, precio y URL de imagen.");
+      alert("Por favor completa nombre, precio y asigna una imagen.");
       return;
     }
 
@@ -194,7 +238,6 @@ export default function AdminPage() {
     }
   };
 
-  // Pantalla de carga mientras revisa sesión
   if (authCargando) {
     return (
       <div className="min-h-screen bg-[#060606] flex items-center justify-center p-4">
@@ -205,7 +248,7 @@ export default function AdminPage() {
     );
   }
 
-  // SI NO ESTÁ AUTENTICADO: PANTALLA DE ACCESO RESTRINGIDO
+  // PANTALLA DE LOGIN
   if (!usuario) {
     return (
       <div className="min-h-screen bg-[#050505] text-white flex items-center justify-center p-4">
@@ -274,12 +317,12 @@ export default function AdminPage() {
     );
   }
 
-  // SI ESTÁ AUTENTICADO: PANEL COMPLETO
+  // PANEL PRINCIPAL
   return (
     <div className="min-h-screen bg-[#060606] text-gray-100 p-4 sm:p-8 font-sans">
       <div className="max-w-4xl mx-auto space-y-8">
         
-        {/* ENCABEZADO CON SESIÓN ACTIVA */}
+        {/* ENCABEZADO */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/10 pb-4 gap-3">
           <div>
             <h1 className="text-xl sm:text-2xl font-black uppercase text-white tracking-wider">
@@ -389,18 +432,74 @@ export default function AdminPage() {
               </div>
             </div>
 
-            <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1">
-                URL de la Imagen (Logo o Portada)
+            {/* SECCIÓN DE IMAGEN: SUBIDA DIRECTA O ENLACE */}
+            <div className="bg-[#141414] border border-white/10 rounded-xl p-3.5 space-y-3">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-blue-400">
+                Imagen del Producto (Subir archivo o pegar enlace)
               </label>
-              <input
-                type="url"
-                placeholder="https://..."
-                value={imagenUrl}
-                onChange={(e) => setImagenUrl(e.target.value)}
-                className="w-full bg-[#181818] border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
-                required
-              />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+                <div>
+                  <span className="text-[10px] text-gray-400 block mb-1 font-semibold uppercase">
+                    Opción A: Subir desde Galería / Archivos
+                  </span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleSubirArchivo}
+                    disabled={subiendoImagen}
+                    className="w-full text-xs text-gray-400 file:mr-2.5 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-500 file:cursor-pointer bg-[#1c1c1c] p-1.5 rounded-xl border border-white/10"
+                  />
+                  {subiendoImagen && (
+                    <div className="mt-1.5 space-y-1">
+                      <div className="w-full bg-[#202020] h-1.5 rounded-full overflow-hidden">
+                        <div
+                          className="bg-blue-500 h-full transition-all duration-200"
+                          style={{ width: `${progresoSubida}%` }}
+                        />
+                      </div>
+                      <span className="text-[10px] text-blue-400 font-bold block">
+                        Subiendo... {progresoSubida}%
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <span className="text-[10px] text-gray-400 block mb-1 font-semibold uppercase">
+                    Opción B: URL Externa
+                  </span>
+                  <input
+                    type="url"
+                    placeholder="https://..."
+                    value={imagenUrl}
+                    onChange={(e) => setImagenUrl(e.target.value)}
+                    className="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+              </div>
+
+              {/* Vista previa en miniatura */}
+              {imagenUrl && (
+                <div className="flex items-center gap-3 pt-1 border-t border-white/5">
+                  <img
+                    src={imagenUrl}
+                    alt="Vista previa"
+                    className="w-12 h-12 object-cover rounded-lg bg-black border border-white/10"
+                    onError={(e) => {
+                      (e.target as HTMLElement).style.display = "none";
+                    }}
+                  />
+                  <div className="min-w-0">
+                    <span className="text-[10px] text-green-400 font-bold block">
+                      ✓ Imagen lista
+                    </span>
+                    <span className="text-[10px] text-gray-500 truncate block max-w-xs">
+                      {imagenUrl}
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div>
@@ -444,10 +543,16 @@ export default function AdminPage() {
             <div className="flex items-center gap-3 pt-3">
               <button
                 type="submit"
-                disabled={guardando}
+                disabled={guardando || subiendoImagen}
                 className="bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-wider text-xs px-6 py-2.5 rounded-xl transition-all shadow-md active:scale-95 disabled:opacity-50"
               >
-                {guardando ? "Guardando..." : editandoId ? "Actualizar Producto" : "Registrar Producto"}
+                {guardando
+                  ? "Guardando..."
+                  : subiendoImagen
+                  ? "Espera que suba la imagen..."
+                  : editandoId
+                  ? "Actualizar Producto"
+                  : "Registrar Producto"}
               </button>
 
               {editandoId && (

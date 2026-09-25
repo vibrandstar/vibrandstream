@@ -1,21 +1,18 @@
-// Importar las funciones necesarias de Firebase
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { getStorage } from "firebase/storage";
 
-// Tu configuración única de Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyB3CjgE2VEu2dc94gtEQsDg_TA-V_2iDlA",
-  authDomain: "vibrandstream.firebaseapp.com",
-  projectId: "vibrandstream",
-  storageBucket: "vibrandstream.firebasestorage.app",
-  messagingSenderId: "1049110200463",
-  appId: "1:1049110200463:web:fd0d8a30bd92d2925870fa"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Inicializar Firebase (esta condición evita que Next.js intente conectarse dos veces por error)
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-
-// Exportar los servicios para poder usarlos en el resto de la página
-export const auth = getAuth(app); // Para el login de administrador
-export const db = getFirestore(app); // Para guardar los productos y precios
+export const db = getFirestore(app);
+export const auth = getAuth(app);
+export const storage = getStorage(app);
