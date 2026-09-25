@@ -5,20 +5,20 @@ import { CartProvider } from "@/context/CartContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
-// Configuración de visualización en celular (evita zoom molesto y define color de barra superior)
+// Configuración de visualización móvil nativa obligatoria
 export const viewport: Viewport = {
-  themeColor: "#050505",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  themeColor: "#050505",
 };
 
-// METADATOS OFICIALES PARA WHATSAPP, GOOGLE Y REDES SOCIALES
+// Metadatos SEO y Redes Sociales
 export const metadata: Metadata = {
-  // Cuando despliegues en Vercel, esta será tu URL oficial
   metadataBase: new URL("https://vibrandstream.vercel.app"),
   title: "VibrandStream | Cuentas y Perfiles de Streaming Premium",
-  description: "Tus plataformas favoritas de streaming al mejor precio. Cuentas originales con acceso inmediato en 10-15 minutos, garantía total y soporte directo vía WhatsApp.",
+  description: "Tus plataformas favoritas de streaming al mejor precio. Acceso inmediato en 10-15 minutos con garantía total y soporte directo vía WhatsApp.",
   keywords: [
     "streaming",
     "cuentas de streaming",
@@ -27,8 +27,7 @@ export const metadata: Metadata = {
     "disney plus",
     "hbo max",
     "prime video",
-    "vibrandstream",
-    "cuentas originales"
+    "vibrandstream"
   ],
   authors: [{ name: "Gerardo Custodio - VibrandStream" }],
   openGraph: {
@@ -66,8 +65,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className="dark">
-      <body className={`${inter.className} bg-[#050505] text-gray-200 antialiased selection:bg-blue-500/30`}>
+    <html lang="es" className="dark w-full max-w-full overflow-x-hidden">
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+      </head>
+      <body className={`${inter.className} bg-[#050505] text-gray-200 antialiased selection:bg-blue-500/30 w-full max-w-full overflow-x-hidden min-h-screen`}>
         <CartProvider>
           {children}
         </CartProvider>
