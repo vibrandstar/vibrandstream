@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { db } from "@/lib/firebase";
+import { db, auth } from "@/lib/firebase";
 import {
   collection,
   getDocs,
@@ -10,6 +10,12 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
+import {
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  User,
+} from "firebase/auth";
 
 interface Producto {
   id: string;
@@ -25,12 +31,21 @@ interface Producto {
 }
 
 export default function AdminPage() {
+  // Estado de Autenticación
+  const [usuario, setUsuario] = useState<User | null>(null);
+  const [authCargando, setAuthCargando] = useState(true);
+  const [emailLogin, setEmailLogin] = useState("");
+  const [passwordLogin, setPasswordLogin] = useState("");
+  const [errorLogin, setErrorLogin] = useState("");
+  const [procesandoLogin, setProcesandoLogin] = useState(false);
+
+  // Estado del Catálogo
   const [productos, setProductos] = useState<Producto[]>([]);
   const [cargando, setCargando] = useState(true);
   const [guardando, setGuardando] = useState(false);
   const [editandoId, setEditandoId] = useState<string | null>(null);
 
-  // Formulario
+  // Formulario de Producto
   const [nombre, setNombre] = useState("");
   const [precio, setPrecio] = useState<number | "">("");
   const [descripcion, setDescripcion] = useState("");
@@ -41,8 +56,38 @@ export default function AdminPage() {
   const [disponible, setDisponible] = useState(true);
   const [destacado, setDestacado] = useState(false);
 
-  // Solo las 4 categorías permitidas para asignar a los productos
   const categoriasDisponibles = ["Perfil", "Completa", "Música", "Herramientas"];
+
+  // Escuchar si hay sesión activa
+  useEffect(() => {
+    const desuscribir = onAuthStateChanged(auth, (userActual) => {
+      setUsuario(userActual);
+      setAuthCargando(false);
+      if (userActual) {
+        cargarProductos();
+      }
+    });
+    return () => desuscribir();
+  }, []);
+
+  const iniciarSesion = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorLogin("");
+    setProcesandoLogin(true);
+    try {
+      await signInWithEmailAndPassword(auth, emailLogin.trim(), passwordLogin);
+    } catch (err: any) {
+      console.error("Error al iniciar sesión:", err);
+      setErrorLogin("Correo o contraseña incorrectos. Revisa tus credenciales.");
+    } finally {
+      setProcesandoLogin(false);
+    }
+  };
+
+  const cerrarSesion = async () => {
+    await signOut(auth);
+    setProductos([]);
+  };
 
   const cargarProductos = async () => {
     try {
@@ -59,10 +104,6 @@ export default function AdminPage() {
       setCargando(false);
     }
   };
-
-  useEffect(() => {
-    cargarProductos();
-  }, []);
 
   const limpiarFormulario = () => {
     setEditandoId(null);
@@ -153,26 +194,115 @@ export default function AdminPage() {
     }
   };
 
+  // Pantalla de carga mientras revisa sesión
+  if (authCargando) {
+    return (
+      <div className="min-h-screen bg-[#060606] flex items-center justify-center p-4">
+        <p className="text-xs text-gray-500 font-mono uppercase tracking-widest animate-pulse">
+          Verificando credenciales de acceso...
+        </p>
+      </div>
+    );
+  }
+
+  // SI NO ESTÁ AUTENTICADO: PANTALLA DE ACCESO RESTRINGIDO
+  if (!usuario) {
+    return (
+      <div className="min-h-screen bg-[#050505] text-white flex items-center justify-center p-4">
+        <div className="w-full max-w-sm bg-[#101010] border border-white/10 rounded-2xl p-6 sm:p-8 space-y-5 shadow-2xl">
+          <div className="text-center space-y-1.5">
+            <span className="text-3xl block">🔒</span>
+            <h1 className="text-base sm:text-lg font-black uppercase tracking-wider text-white">
+              Acceso Administrativo
+            </h1>
+            <p className="text-xs text-gray-400">
+              Ingresa tu correo y contraseña autorizados
+            </p>
+          </div>
+
+          {errorLogin && (
+            <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-xs p-3 rounded-xl text-center">
+              {errorLogin}
+            </div>
+          )}
+
+          <form onSubmit={iniciarSesion} className="space-y-4">
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1">
+                Correo Electrónico
+              </label>
+              <input
+                type="email"
+                placeholder="admin@vibrandstream.com"
+                value={emailLogin}
+                onChange={(e) => setEmailLogin(e.target.value)}
+                className="w-full bg-[#181818] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-blue-500 transition-colors"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1">
+                Contraseña
+              </label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                value={passwordLogin}
+                onChange={(e) => setPasswordLogin(e.target.value)}
+                className="w-full bg-[#181818] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-blue-500 transition-colors"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={procesandoLogin}
+              className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-black uppercase text-xs rounded-xl tracking-wider transition-all shadow-md shadow-blue-600/30 active:scale-95 disabled:opacity-50"
+            >
+              {procesandoLogin ? "Verificando..." : "Ingresar al Panel"}
+            </button>
+          </form>
+
+          <div className="text-center pt-2">
+            <a href="/" className="text-xs text-gray-500 hover:text-white transition-colors">
+              ← Volver a la Tienda
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // SI ESTÁ AUTENTICADO: PANEL COMPLETO
   return (
     <div className="min-h-screen bg-[#060606] text-gray-100 p-4 sm:p-8 font-sans">
       <div className="max-w-4xl mx-auto space-y-8">
         
-        {/* ENCABEZADO */}
-        <div className="flex items-center justify-between border-b border-white/10 pb-4">
+        {/* ENCABEZADO CON SESIÓN ACTIVA */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/10 pb-4 gap-3">
           <div>
             <h1 className="text-xl sm:text-2xl font-black uppercase text-white tracking-wider">
               Panel Administrativo
             </h1>
-            <p className="text-xs text-gray-400 mt-1">
-              Gestiona catálogo, categorías y los 3 productos destacados.
+            <p className="text-xs text-gray-400 mt-0.5">
+              Conectado como: <span className="text-blue-400 font-medium">{usuario.email}</span>
             </p>
           </div>
-          <a
-            href="/"
-            className="text-xs font-bold bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg border border-white/10 transition-colors"
-          >
-            ← Volver a la Tienda
-          </a>
+          <div className="flex items-center gap-2">
+            <a
+              href="/"
+              className="text-xs font-bold bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg border border-white/10 transition-colors"
+            >
+              Tienda
+            </a>
+            <button
+              onClick={cerrarSesion}
+              className="text-xs font-bold bg-red-600/20 hover:bg-red-600/30 text-red-400 border border-red-500/30 px-3 py-1.5 rounded-lg transition-colors"
+            >
+              Cerrar Sesión
+            </button>
+          </div>
         </div>
 
         {/* FORMULARIO DE ALTA / EDICIÓN */}
@@ -286,7 +416,7 @@ export default function AdminPage() {
               />
             </div>
 
-            {/* DISPONIBLE Y DESTACADO */}
+            {/* CASILLAS DISPONIBLE Y DESTACADO */}
             <div className="flex flex-wrap items-center gap-6 pt-2">
               <label className="flex items-center gap-2 cursor-pointer select-none">
                 <input
@@ -333,7 +463,7 @@ export default function AdminPage() {
           </form>
         </div>
 
-        {/* LISTA ACTUAL */}
+        {/* LISTA ACTUAL DE PRODUCTOS */}
         <div className="bg-[#101010] border border-white/10 rounded-2xl p-5 sm:p-7 shadow-xl space-y-4">
           <div className="flex items-center justify-between border-b border-white/10 pb-3">
             <h2 className="text-sm sm:text-base font-black uppercase text-white tracking-wider">
