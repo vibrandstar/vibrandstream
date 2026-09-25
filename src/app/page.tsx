@@ -15,8 +15,8 @@ interface Producto {
   suscripcion: string;
   disponible: boolean;
   imagenUrl: string;
-  perfiles?: number;
-  dispositivos?: number;
+  categoria?: string;
+  destacado?: boolean;
 }
 
 export default function Home() {
@@ -63,8 +63,15 @@ export default function Home() {
     obtenerProductos();
   }, []);
 
+  // ÚNICAS CATEGORÍAS VÁLIDAS
   const categorias = ["Todos", "Perfil", "Completa", "Música", "Herramientas"];
 
+  // 3 Productos destacados
+  const productosDestacados = useMemo(() => {
+    return productos.filter((p) => p.destacado).slice(0, 3);
+  }, [productos]);
+
+  // Filtro estricto por categoría seleccionada o Todos
   const productosFiltrados = useMemo(() => {
     return productos.filter((producto) => {
       const q = busqueda.toLowerCase().trim();
@@ -72,20 +79,15 @@ export default function Home() {
         !q ||
         producto.nombre.toLowerCase().includes(q) ||
         producto.tipo.toLowerCase().includes(q) ||
+        (producto.categoria && producto.categoria.toLowerCase().includes(q)) ||
         producto.suscripcion.toLowerCase().includes(q);
 
       const coincideCategoria =
         categoriaSeleccionada === "Todos" ||
-        (categoriaSeleccionada === "Perfil" && producto.tipo.toLowerCase().includes("perfil")) ||
-        (categoriaSeleccionada === "Completa" && producto.tipo.toLowerCase().includes("completa")) ||
-        (categoriaSeleccionada === "Música" &&
-          (producto.nombre.toLowerCase().includes("spotify") ||
-            producto.nombre.toLowerCase().includes("apple") ||
-            producto.nombre.toLowerCase().includes("youtube"))) ||
-        (categoriaSeleccionada === "Herramientas" &&
-          (producto.nombre.toLowerCase().includes("canva") ||
-            producto.nombre.toLowerCase().includes("capcut") ||
-            producto.tipo.toLowerCase().includes("equipo")));
+        (producto.categoria && producto.categoria.toLowerCase() === categoriaSeleccionada.toLowerCase()) ||
+        // Soporte de compatibilidad para productos que aún no se hayan editado
+        (categoriaSeleccionada === "Perfil" && producto.tipo?.toLowerCase().includes("perfil")) ||
+        (categoriaSeleccionada === "Completa" && producto.tipo?.toLowerCase().includes("completa"));
 
       return coincideBusqueda && coincideCategoria;
     });
@@ -175,7 +177,7 @@ export default function Home() {
       </header>
 
       {/* CONTENIDO PRINCIPAL */}
-      <main className="max-w-5xl mx-auto w-full px-4 sm:px-6 pt-5 pb-14 flex-1 space-y-5 sm:space-y-7">
+      <main className="max-w-5xl mx-auto w-full px-4 sm:px-6 pt-5 pb-14 flex-1 space-y-6 sm:space-y-8">
         
         {/* HERO Y BUSCADOR */}
         <section className="text-center space-y-2.5 pt-1 max-w-lg mx-auto w-full">
@@ -184,7 +186,7 @@ export default function Home() {
           </span>
 
           <h1 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight leading-tight">
-            Streaming Premium Original
+            CATÁLOGO STREAMING
           </h1>
 
           <p className="text-xs sm:text-sm text-gray-400 max-w-md mx-auto leading-relaxed">
@@ -211,7 +213,60 @@ export default function Home() {
           </div>
         </section>
 
-        {/* SELECTOR DE CATEGORÍAS */}
+        {/* 3 PRODUCTOS DESTACADOS */}
+        {productosDestacados.length > 0 && !busqueda && categoriaSeleccionada === "Todos" && (
+          <section className="space-y-3 bg-[#0c0c0c] border border-blue-500/20 p-4 sm:p-5 rounded-2xl">
+            <div className="flex items-center gap-2">
+              <span className="text-base sm:text-lg">⭐</span>
+              <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-white">
+                Plataformas Más Populares
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {productosDestacados.map((prod) => (
+                <div
+                  key={prod.id}
+                  className="bg-[#141414] border border-white/10 hover:border-blue-500/40 rounded-xl p-3 flex sm:flex-col items-center gap-3 transition-colors"
+                >
+                  <img
+                    src={prod.imagenUrl}
+                    alt={prod.nombre}
+                    className="w-16 h-16 sm:w-full sm:h-28 object-cover rounded-lg shrink-0 bg-black"
+                  />
+                  <div className="flex-1 min-w-0 sm:text-center w-full">
+                    <span className="text-[10px] text-blue-400 font-bold uppercase tracking-wider block">
+                      {prod.tipo}
+                    </span>
+                    <h3 className="font-bold text-xs sm:text-sm text-white truncate mt-0.5">
+                      {prod.nombre}
+                    </h3>
+                    <div className="text-xs sm:text-sm font-black text-white mt-1">
+                      ${prod.precio} MXN
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-1.5 mt-2">
+                      <button
+                        onClick={() => agregarAlCarrito(prod)}
+                        className="bg-white/5 hover:bg-white/10 text-white text-[10px] font-bold py-1.5 rounded-lg border border-white/10"
+                      >
+                        + Carro
+                      </button>
+                      <button
+                        onClick={() => comprarProductoDirecto(prod)}
+                        className="bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-black py-1.5 rounded-lg"
+                      >
+                        Comprar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* SELECTOR DE CATEGORÍAS (TODOS + 4 CATEGORÍAS) */}
         <section className="w-full overflow-x-auto no-scrollbar py-1">
           <div className="flex items-center justify-start sm:justify-center gap-2 min-w-max px-0.5">
             {categorias.map((cat) => (
@@ -230,17 +285,17 @@ export default function Home() {
           </div>
         </section>
 
-        {/* CATÁLOGO DE PRODUCTOS (2 Columnas en móvil / 4 en PC) */}
+        {/* CATÁLOGO GENERAL */}
         <section className="w-full">
           {cargando ? (
             <div className="py-16 text-center text-gray-500 font-mono text-xs sm:text-sm uppercase tracking-widest animate-pulse">
-              Cargando plataformas...
+              Cargando catálogo...
             </div>
           ) : productosFiltrados.length === 0 ? (
             <div className="py-12 text-center bg-[#0e0e0e] border border-white/10 rounded-2xl p-6 max-w-xs mx-auto space-y-1.5">
               <span className="text-3xl block">🔍</span>
               <p className="text-gray-300 text-sm font-bold">No hay plataformas disponibles</p>
-              <p className="text-gray-500 text-xs">Prueba buscando otro servicio.</p>
+              <p className="text-gray-500 text-xs">Prueba con otra categoría o término.</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
@@ -249,7 +304,6 @@ export default function Home() {
                   key={prod.id}
                   className="bg-[#0e0e0e] border border-white/[0.08] hover:border-white/20 rounded-2xl overflow-hidden flex flex-col justify-between transition-all shadow-lg shadow-black/40"
                 >
-                  {/* Imagen */}
                   <Link
                     href={`/producto/${prod.id}`}
                     className="block relative aspect-square w-full bg-[#161616] overflow-hidden"
@@ -274,7 +328,6 @@ export default function Home() {
                     </span>
                   </Link>
 
-                  {/* Datos del producto */}
                   <div className="p-3 flex flex-col justify-between flex-1 gap-2.5">
                     <div>
                       <span className="text-[11px] text-gray-500 block truncate font-medium">
@@ -318,11 +371,10 @@ export default function Home() {
 
       </main>
 
-      {/* FOOTER TOTALMENTE CENTRADO Y SIN ACCESO ADMIN */}
+      {/* FOOTER TOTALMENTE CENTRADO */}
       <footer className="border-t border-white/[0.08] bg-[#070707] py-9 px-4 text-gray-400 w-full">
         <div className="max-w-xl mx-auto space-y-6 text-center flex flex-col items-center justify-center">
           
-          {/* Marca y Descripción */}
           <div className="space-y-2 flex flex-col items-center">
             <span className="font-black text-white text-base sm:text-lg uppercase tracking-widest">
               VIBRAND<span className="text-blue-500">STREAM</span>
@@ -332,7 +384,6 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Atención al Cliente */}
           <div className="space-y-3 flex flex-col items-center w-full">
             <span className="text-xs font-bold uppercase tracking-wider text-white">
               Atención al Cliente
@@ -353,7 +404,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Método de Pago SPEI */}
           <div className="bg-[#101010] border border-white/5 p-4.5 rounded-2xl space-y-1.5 text-center max-w-sm w-full">
             <span className="text-[11px] font-bold uppercase tracking-wider text-blue-400 block">
               Método de Pago
@@ -366,7 +416,6 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Derechos Reservados */}
           <div className="text-xs text-gray-600 pt-2 border-t border-white/[0.04] w-full text-center">
             © 2026 VibrandStream. Todos los derechos reservados.
           </div>
