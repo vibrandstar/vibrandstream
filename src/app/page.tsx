@@ -249,7 +249,6 @@ export default function Home() {
                   key={prod.id}
                   className="bg-[#0e0e0e] border border-white/[0.08] hover:border-white/20 rounded-xl overflow-hidden flex flex-col justify-between transition-all"
                 >
-                  {/* Imagen */}
                   <Link
                     href={`/producto/${prod.id}`}
                     className="block relative aspect-square w-full bg-[#161616] overflow-hidden"
@@ -274,7 +273,6 @@ export default function Home() {
                     </span>
                   </Link>
 
-                  {/* Datos del producto */}
                   <div className="p-2.5 flex flex-col justify-between flex-1 gap-2">
                     <div>
                       <span className="text-[10px] text-gray-500 block truncate font-medium">
@@ -318,48 +316,59 @@ export default function Home() {
 
       </main>
 
-      {/* FOOTER LIMPIO SIN ACCESO DE ADMIN */}
-      <footer className="border-t border-white/[0.08] bg-[#070707] py-6 px-3.5 text-gray-400">
-        <div className="max-w-5xl mx-auto space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pb-4 border-b border-white/[0.05]">
-            <div className="space-y-1">
-              <span className="font-black text-white text-xs uppercase tracking-wider">
-                VIBRAND<span className="text-blue-500">STREAM</span>
-              </span>
-              <p className="text-[11px] text-gray-500 leading-relaxed">
-                Suscripciones digitales y streaming garantizado con soporte y entrega vía WhatsApp.
-              </p>
-            </div>
+      {/* FOOTER TOTALMENTE CENTRADO Y SIN ACCESO ADMIN */}
+      <footer className="border-t border-white/[0.08] bg-[#070707] py-8 px-4 text-gray-400 w-full">
+        <div className="max-w-xl mx-auto space-y-6 text-center flex flex-col items-center justify-center">
+          
+          {/* Marca y Descripción */}
+          <div className="space-y-1.5 flex flex-col items-center">
+            <span className="font-black text-white text-sm sm:text-base uppercase tracking-widest">
+              VIBRAND<span className="text-blue-500">STREAM</span>
+            </span>
+            <p className="text-xs text-gray-400 max-w-sm leading-relaxed text-center">
+              Suscripciones digitales y streaming garantizado con soporte y entrega vía WhatsApp.
+            </p>
+          </div>
 
-            <div className="space-y-1 text-xs">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-white block">
-                Atención al Cliente
-              </span>
-              <div className="flex flex-col space-y-1">
-                <Link href="/reportar-problema" className="text-gray-400 hover:text-white transition-colors flex items-center gap-1.5">
-                  <span>🛠️</span> Centro de Garantías y Reportes
-                </Link>
-                <button
-                  onClick={() => setModalSpeiAbierto(true)}
-                  className="text-gray-400 hover:text-white text-left transition-colors flex items-center gap-1.5"
-                >
-                  <span>💳</span> Información de Cuenta SPEI
-                </button>
-              </div>
-            </div>
-
-            <div className="bg-[#101010] border border-white/5 p-2.5 rounded-xl space-y-0.5 text-xs">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400 block">
-                Método de Pago
-              </span>
-              <p className="text-white font-semibold">Transferencia SPEI (Nu México)</p>
-              <p className="text-[10px] text-gray-500">Aceptamos transferencias desde cualquier banco.</p>
+          {/* Atención al Cliente */}
+          <div className="space-y-2.5 flex flex-col items-center w-full">
+            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-white">
+              Atención al Cliente
+            </span>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-xs w-full">
+              <Link
+                href="/reportar-problema"
+                className="text-gray-300 hover:text-white transition-colors flex items-center justify-center gap-1.5 py-1"
+              >
+                <span>🛠️</span> Centro de Garantías y Reportes
+              </Link>
+              <button
+                onClick={() => setModalSpeiAbierto(true)}
+                className="text-gray-300 hover:text-white transition-colors flex items-center justify-center gap-1.5 py-1"
+              >
+                <span>💳</span> Información de Cuenta SPEI
+              </button>
             </div>
           </div>
 
-          <div className="text-center text-[10px] text-gray-600">
+          {/* Método de Pago SPEI */}
+          <div className="bg-[#101010] border border-white/5 p-4 rounded-2xl space-y-1 text-center max-w-sm w-full">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400 block">
+              Método de Pago
+            </span>
+            <p className="text-xs text-white font-semibold">
+              Transferencia SPEI (Nu México)
+            </p>
+            <p className="text-[11px] text-gray-500 leading-normal">
+              Aceptamos transferencias desde cualquier banco.
+            </p>
+          </div>
+
+          {/* Derechos Reservados */}
+          <div className="text-[11px] text-gray-600 pt-2 border-t border-white/[0.04] w-full text-center">
             © 2026 VibrandStream. Todos los derechos reservados.
           </div>
+
         </div>
       </footer>
 
