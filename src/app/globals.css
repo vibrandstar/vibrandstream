@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -14,10 +12,4 @@ html, body {
   overflow-x: hidden;
   background-color: #050505;
   color: #ededed;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
 }
