@@ -118,53 +118,53 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-gray-200 font-sans selection:bg-blue-500/30 w-full overflow-x-hidden relative flex flex-col justify-between antialiased">
+    <div className="min-h-screen bg-[#050505] text-gray-100 font-sans selection:bg-blue-500/30 w-full overflow-x-hidden relative flex flex-col justify-between antialiased">
       
       {/* NAVBAR */}
       <header className="sticky top-0 z-40 bg-[#080808]/95 backdrop-blur-md border-b border-white/[0.08] w-full">
-        <div className="max-w-5xl mx-auto px-3.5 sm:px-6 h-14 flex items-center justify-between gap-2">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-2">
           
-          <Link href="/" className="flex items-center gap-2 shrink-0">
+          <Link href="/" className="flex items-center gap-2.5 shrink-0">
             <img
               src="/logo.png"
               alt="VibrandStream"
-              className="h-6 w-6 object-contain rounded"
+              className="h-8 w-8 object-contain rounded"
               onError={(e) => {
                 (e.target as HTMLElement).style.display = "none";
               }}
             />
-            <span className="text-xs sm:text-sm font-black text-white tracking-wider uppercase">
+            <span className="text-sm sm:text-base font-black text-white tracking-wider uppercase">
               VIBRAND<span className="text-blue-500">STREAM</span>
             </span>
           </Link>
 
-          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={() => setModalSpeiAbierto(true)}
-              className="text-[11px] font-bold bg-[#141414] hover:bg-[#202020] text-gray-200 px-2.5 py-1.5 rounded-lg border border-white/10 transition-colors flex items-center gap-1"
+              className="text-xs font-bold bg-[#141414] hover:bg-[#202020] text-gray-200 px-3 py-2 rounded-xl border border-white/10 transition-colors flex items-center gap-1.5"
             >
-              <span>💳</span>
+              <span className="text-sm">💳</span>
               <span>SPEI</span>
             </button>
 
             <Link
               href="/reportar-problema"
-              className="text-[11px] font-bold bg-[#141414] hover:bg-[#202020] text-gray-200 px-2.5 py-1.5 rounded-lg border border-white/10 transition-colors flex items-center gap-1"
+              className="text-xs font-bold bg-[#141414] hover:bg-[#202020] text-gray-200 px-3 py-2 rounded-xl border border-white/10 transition-colors flex items-center gap-1.5"
             >
-              <span>🛠️</span>
+              <span className="text-sm">🛠️</span>
               <span className="hidden sm:inline">Garantía</span>
             </Link>
 
             <button
               onClick={() => setCarritoAbierto(true)}
-              className="relative p-1.5 sm:p-2 bg-blue-600/15 hover:bg-blue-600/25 border border-blue-500/30 rounded-lg text-blue-400 hover:text-white transition-all active:scale-95 flex items-center justify-center shrink-0"
+              className="relative p-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 rounded-xl text-blue-400 hover:text-white transition-all active:scale-95 flex items-center justify-center shrink-0"
               aria-label="Abrir carrito"
             >
-              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
               {carrito.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md">
+                <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-[10px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center shadow-md">
                   {carrito.reduce((acc, i) => acc + i.cantidad, 0)}
                 </span>
               )}
@@ -175,35 +175,35 @@ export default function Home() {
       </header>
 
       {/* CONTENIDO PRINCIPAL */}
-      <main className="max-w-5xl mx-auto w-full px-3.5 sm:px-6 pt-4 pb-12 flex-1 space-y-4 sm:space-y-6">
+      <main className="max-w-5xl mx-auto w-full px-4 sm:px-6 pt-5 pb-14 flex-1 space-y-5 sm:space-y-7">
         
-        {/* BANNER Y BUSCADOR */}
-        <section className="text-center space-y-2 pt-1 max-w-lg mx-auto w-full">
-          <span className="inline-block text-[9px] font-black uppercase tracking-widest bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-0.5 rounded-full">
+        {/* HERO Y BUSCADOR */}
+        <section className="text-center space-y-2.5 pt-1 max-w-lg mx-auto w-full">
+          <span className="inline-block text-[10px] sm:text-xs font-black uppercase tracking-widest bg-blue-500/15 text-blue-400 border border-blue-500/30 px-3 py-1 rounded-full">
             Entrega Express 10-15 Min
           </span>
 
-          <h1 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight leading-tight">
             Streaming Premium Original
           </h1>
 
-          <p className="text-xs text-gray-400 max-w-sm mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm text-gray-400 max-w-md mx-auto leading-relaxed">
             Perfiles privados y cuentas completas con garantía y soporte directo vía WhatsApp.
           </p>
 
-          <div className="pt-1 w-full relative flex items-center">
+          <div className="pt-1.5 w-full relative flex items-center">
             <input
               type="text"
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
               placeholder="Buscar Netflix, Spotify, Disney+..."
-              className="w-full bg-[#101010] border border-white/10 rounded-xl pl-9 pr-8 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-full bg-[#101010] border border-white/10 rounded-xl pl-10 pr-9 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
             />
-            <span className="absolute left-3 text-gray-500 text-xs">🔍</span>
+            <span className="absolute left-3.5 text-sm text-gray-500">🔍</span>
             {busqueda && (
               <button
                 onClick={() => setBusqueda("")}
-                className="absolute right-3 text-gray-500 hover:text-white text-xs p-1"
+                className="absolute right-3.5 text-gray-400 hover:text-white text-sm p-1"
               >
                 ✕
               </button>
@@ -213,12 +213,12 @@ export default function Home() {
 
         {/* SELECTOR DE CATEGORÍAS */}
         <section className="w-full overflow-x-auto no-scrollbar py-1">
-          <div className="flex items-center justify-start sm:justify-center gap-1.5 min-w-max px-0.5">
+          <div className="flex items-center justify-start sm:justify-center gap-2 min-w-max px-0.5">
             {categorias.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setCategoriaSeleccionada(cat)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all shrink-0 ${
+                className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider transition-all shrink-0 ${
                   categoriaSeleccionada === cat
                     ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
                     : "bg-[#121212] text-gray-400 hover:text-white border border-white/5"
@@ -233,29 +233,30 @@ export default function Home() {
         {/* CATÁLOGO DE PRODUCTOS (2 Columnas en móvil / 4 en PC) */}
         <section className="w-full">
           {cargando ? (
-            <div className="py-16 text-center text-gray-500 font-mono text-xs uppercase tracking-widest animate-pulse">
+            <div className="py-16 text-center text-gray-500 font-mono text-xs sm:text-sm uppercase tracking-widest animate-pulse">
               Cargando plataformas...
             </div>
           ) : productosFiltrados.length === 0 ? (
-            <div className="py-12 text-center bg-[#0e0e0e] border border-white/10 rounded-2xl p-5 max-w-xs mx-auto space-y-1">
-              <span className="text-2xl block">🔍</span>
-              <p className="text-gray-300 text-xs font-bold">No hay plataformas disponibles</p>
-              <p className="text-gray-500 text-[10px]">Prueba buscando otro servicio.</p>
+            <div className="py-12 text-center bg-[#0e0e0e] border border-white/10 rounded-2xl p-6 max-w-xs mx-auto space-y-1.5">
+              <span className="text-3xl block">🔍</span>
+              <p className="text-gray-300 text-sm font-bold">No hay plataformas disponibles</p>
+              <p className="text-gray-500 text-xs">Prueba buscando otro servicio.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 sm:gap-3.5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
               {productosFiltrados.map((prod) => (
                 <div
                   key={prod.id}
-                  className="bg-[#0e0e0e] border border-white/[0.08] hover:border-white/20 rounded-xl overflow-hidden flex flex-col justify-between transition-all"
+                  className="bg-[#0e0e0e] border border-white/[0.08] hover:border-white/20 rounded-2xl overflow-hidden flex flex-col justify-between transition-all shadow-lg shadow-black/40"
                 >
+                  {/* Imagen */}
                   <Link
                     href={`/producto/${prod.id}`}
                     className="block relative aspect-square w-full bg-[#161616] overflow-hidden"
                   >
                     {!prod.disponible && (
                       <div className="absolute inset-0 bg-black/80 z-10 flex items-center justify-center">
-                        <span className="bg-red-600 text-white text-[9px] font-black px-2 py-0.5 uppercase tracking-widest rounded">
+                        <span className="bg-red-600 text-white text-[10px] font-black px-2.5 py-0.5 uppercase tracking-widest rounded">
                           Agotado
                         </span>
                       </div>
@@ -268,40 +269,41 @@ export default function Home() {
                       }`}
                       loading="lazy"
                     />
-                    <span className="absolute bottom-1.5 left-1.5 z-10 text-[9px] font-black uppercase tracking-wider bg-black/85 text-blue-400 px-1.5 py-0.5 rounded border border-white/10">
+                    <span className="absolute bottom-2 left-2 z-10 text-[10px] font-black uppercase tracking-wider bg-black/85 text-blue-400 px-2 py-0.5 rounded-md border border-white/10">
                       {prod.tipo}
                     </span>
                   </Link>
 
-                  <div className="p-2.5 flex flex-col justify-between flex-1 gap-2">
+                  {/* Datos del producto */}
+                  <div className="p-3 flex flex-col justify-between flex-1 gap-2.5">
                     <div>
-                      <span className="text-[10px] text-gray-500 block truncate font-medium">
+                      <span className="text-[11px] text-gray-500 block truncate font-medium">
                         {prod.suscripcion}
                       </span>
                       <Link href={`/producto/${prod.id}`}>
-                        <h3 className="text-white font-bold text-xs leading-tight line-clamp-2 h-7 hover:text-blue-400 transition-colors">
+                        <h3 className="text-white font-bold text-xs sm:text-sm leading-snug line-clamp-2 h-9 hover:text-blue-400 transition-colors">
                           {prod.nombre}
                         </h3>
                       </Link>
                     </div>
 
-                    <div className="pt-1.5 border-t border-white/[0.06] space-y-2">
-                      <div className="text-xs sm:text-sm font-black text-white">
-                        ${prod.precio} <span className="text-[9px] text-gray-500 font-normal">MXN</span>
+                    <div className="pt-2 border-t border-white/[0.06] space-y-2.5">
+                      <div className="text-sm sm:text-base font-black text-white">
+                        ${prod.precio} <span className="text-[10px] sm:text-xs text-gray-500 font-normal">MXN</span>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-1">
+                      <div className="grid grid-cols-2 gap-1.5">
                         <button
                           onClick={() => agregarAlCarrito(prod)}
                           disabled={!prod.disponible}
-                          className="bg-[#181818] hover:bg-[#222222] text-gray-200 border border-white/10 py-1.5 text-[10px] font-bold rounded-lg transition-all active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
+                          className="bg-[#181818] hover:bg-[#222222] text-gray-200 border border-white/10 py-2 text-xs font-bold rounded-xl transition-all active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
                         >
                           + Carro
                         </button>
                         <button
                           onClick={() => comprarProductoDirecto(prod)}
                           disabled={!prod.disponible}
-                          className="bg-blue-600 hover:bg-blue-500 text-white py-1.5 text-[10px] font-black rounded-lg transition-all active:scale-95 disabled:opacity-30 disabled:pointer-events-none shadow-sm shadow-blue-600/30"
+                          className="bg-blue-600 hover:bg-blue-500 text-white py-2 text-xs font-black rounded-xl transition-all active:scale-95 disabled:opacity-30 disabled:pointer-events-none shadow-sm shadow-blue-600/30"
                         >
                           Comprar
                         </button>
@@ -317,25 +319,25 @@ export default function Home() {
       </main>
 
       {/* FOOTER TOTALMENTE CENTRADO Y SIN ACCESO ADMIN */}
-      <footer className="border-t border-white/[0.08] bg-[#070707] py-8 px-4 text-gray-400 w-full">
+      <footer className="border-t border-white/[0.08] bg-[#070707] py-9 px-4 text-gray-400 w-full">
         <div className="max-w-xl mx-auto space-y-6 text-center flex flex-col items-center justify-center">
           
           {/* Marca y Descripción */}
-          <div className="space-y-1.5 flex flex-col items-center">
-            <span className="font-black text-white text-sm sm:text-base uppercase tracking-widest">
+          <div className="space-y-2 flex flex-col items-center">
+            <span className="font-black text-white text-base sm:text-lg uppercase tracking-widest">
               VIBRAND<span className="text-blue-500">STREAM</span>
             </span>
-            <p className="text-xs text-gray-400 max-w-sm leading-relaxed text-center">
+            <p className="text-xs sm:text-sm text-gray-400 max-w-sm leading-relaxed text-center">
               Suscripciones digitales y streaming garantizado con soporte y entrega vía WhatsApp.
             </p>
           </div>
 
           {/* Atención al Cliente */}
-          <div className="space-y-2.5 flex flex-col items-center w-full">
-            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-white">
+          <div className="space-y-3 flex flex-col items-center w-full">
+            <span className="text-xs font-bold uppercase tracking-wider text-white">
               Atención al Cliente
             </span>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-xs w-full">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-4 text-xs sm:text-sm w-full">
               <Link
                 href="/reportar-problema"
                 className="text-gray-300 hover:text-white transition-colors flex items-center justify-center gap-1.5 py-1"
@@ -352,20 +354,20 @@ export default function Home() {
           </div>
 
           {/* Método de Pago SPEI */}
-          <div className="bg-[#101010] border border-white/5 p-4 rounded-2xl space-y-1 text-center max-w-sm w-full">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400 block">
+          <div className="bg-[#101010] border border-white/5 p-4.5 rounded-2xl space-y-1.5 text-center max-w-sm w-full">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-blue-400 block">
               Método de Pago
             </span>
-            <p className="text-xs text-white font-semibold">
+            <p className="text-sm text-white font-semibold">
               Transferencia SPEI (Nu México)
             </p>
-            <p className="text-[11px] text-gray-500 leading-normal">
+            <p className="text-xs text-gray-500 leading-normal">
               Aceptamos transferencias desde cualquier banco.
             </p>
           </div>
 
           {/* Derechos Reservados */}
-          <div className="text-[11px] text-gray-600 pt-2 border-t border-white/[0.04] w-full text-center">
+          <div className="text-xs text-gray-600 pt-2 border-t border-white/[0.04] w-full text-center">
             © 2026 VibrandStream. Todos los derechos reservados.
           </div>
 
@@ -374,37 +376,37 @@ export default function Home() {
 
       {/* MODAL SPEI */}
       {modalSpeiAbierto && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/80 backdrop-blur-sm">
-          <div className="w-full max-w-xs bg-[#101010] border border-white/10 rounded-2xl p-4 space-y-3 relative shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="w-full max-w-xs sm:max-w-sm bg-[#101010] border border-white/10 rounded-2xl p-5 space-y-3.5 relative shadow-2xl">
             <button
               onClick={() => setModalSpeiAbierto(false)}
-              className="absolute top-3 right-3 text-gray-500 hover:text-white text-xs p-1"
+              className="absolute top-3.5 right-3.5 text-gray-500 hover:text-white text-sm p-1"
             >
               ✕
             </button>
-            <div className="text-center space-y-0.5">
-              <span className="text-[9px] uppercase font-bold tracking-widest text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-full border border-blue-500/20 inline-block">
+            <div className="text-center space-y-1">
+              <span className="text-[10px] uppercase font-bold tracking-widest text-blue-400 bg-blue-500/10 px-2.5 py-0.5 rounded-full border border-blue-500/20 inline-block">
                 Pago Seguro
               </span>
-              <h3 className="text-sm font-black text-white uppercase">Datos de Transferencia</h3>
+              <h3 className="text-base font-black text-white uppercase">Datos de Transferencia</h3>
             </div>
 
-            <div className="bg-[#161616] border border-white/5 p-3 rounded-xl space-y-1.5 text-[11px] font-mono">
+            <div className="bg-[#161616] border border-white/5 p-3.5 rounded-xl space-y-2 text-xs font-mono">
               <div>
-                <span className="text-[9px] text-gray-500 block font-sans font-bold uppercase">Banco:</span>
+                <span className="text-[10px] text-gray-500 block font-sans font-bold uppercase">Banco:</span>
                 <span className="text-white font-bold">Nu México</span>
               </div>
               <div>
-                <span className="text-[9px] text-gray-500 block font-sans font-bold uppercase">Beneficiario:</span>
-                <span className="text-gray-300 text-[10px]">{titularNu}</span>
+                <span className="text-[10px] text-gray-500 block font-sans font-bold uppercase">Beneficiario:</span>
+                <span className="text-gray-300 text-xs">{titularNu}</span>
               </div>
               <div>
-                <span className="text-[9px] text-gray-500 block font-sans font-bold uppercase">CLABE Interbancaria:</span>
-                <div className="flex items-center justify-between gap-1 mt-1 bg-black/40 p-2 rounded-lg border border-white/10">
-                  <span className="text-blue-400 font-bold select-all tracking-wider text-[10px]">{clabeNu}</span>
+                <span className="text-[10px] text-gray-500 block font-sans font-bold uppercase">CLABE Interbancaria:</span>
+                <div className="flex items-center justify-between gap-1.5 mt-1 bg-black/40 p-2.5 rounded-lg border border-white/10">
+                  <span className="text-blue-400 font-bold select-all tracking-wider text-xs sm:text-sm">{clabeNu}</span>
                   <button
                     onClick={copiarClabe}
-                    className="bg-blue-600 hover:bg-blue-500 text-white text-[9px] px-2 py-0.5 rounded font-sans font-bold transition-colors"
+                    className="bg-blue-600 hover:bg-blue-500 text-white text-[10px] px-2.5 py-1 rounded-md font-sans font-bold transition-colors"
                   >
                     {clabeCopiada ? "Listo" : "Copiar"}
                   </button>
@@ -414,7 +416,7 @@ export default function Home() {
 
             <button
               onClick={enviarComprobanteWhatsApp}
-              className="w-full py-2 bg-[#25D366] hover:bg-[#20ba59] text-white font-black uppercase text-[10px] rounded-lg tracking-wider transition-colors shadow-md shadow-green-600/20"
+              className="w-full py-2.5 bg-[#25D366] hover:bg-[#20ba59] text-white font-black uppercase text-xs rounded-xl tracking-wider transition-colors shadow-md shadow-green-600/20"
             >
               📲 Enviar Comprobante por WhatsApp
             </button>
@@ -425,55 +427,55 @@ export default function Home() {
       {/* DRAWER CARRITO */}
       {carritoAbierto && (
         <div className="fixed inset-0 z-50 flex justify-end bg-black/80 backdrop-blur-sm">
-          <div className="w-full max-w-xs sm:max-w-sm bg-[#0d0d0d] border-l border-white/10 h-full flex flex-col justify-between p-4 shadow-2xl">
+          <div className="w-full max-w-xs sm:max-w-sm bg-[#0d0d0d] border-l border-white/10 h-full flex flex-col justify-between p-4.5 shadow-2xl">
             <div>
-              <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-3">
-                <h3 className="font-black text-white text-xs uppercase flex items-center gap-1.5">
+              <div className="flex items-center justify-between border-b border-white/10 pb-3.5 mb-3.5">
+                <h3 className="font-black text-white text-sm sm:text-base uppercase flex items-center gap-2">
                   <span>🛒</span> Tu Carrito
                 </h3>
                 <button
                   onClick={() => setCarritoAbierto(false)}
-                  className="text-gray-500 hover:text-white text-xs p-1"
+                  className="text-gray-500 hover:text-white text-sm p-1"
                 >
                   ✕
                 </button>
               </div>
 
               {carrito.length === 0 ? (
-                <div className="py-12 text-center text-gray-500 text-xs">El carrito está vacío.</div>
+                <div className="py-14 text-center text-gray-500 text-sm">El carrito está vacío.</div>
               ) : (
-                <div className="space-y-2 max-h-[65vh] overflow-y-auto pr-1">
+                <div className="space-y-2.5 max-h-[65vh] overflow-y-auto pr-1">
                   {carrito.map((item) => (
                     <div
                       key={item.id}
-                      className="bg-[#141414] border border-white/5 p-2 rounded-lg flex items-center justify-between gap-2"
+                      className="bg-[#141414] border border-white/5 p-2.5 rounded-xl flex items-center justify-between gap-2"
                     >
                       <div className="min-w-0">
-                        <h4 className="text-white font-bold text-xs truncate">{item.nombre}</h4>
-                        <span className="text-[10px] text-gray-400 block">{item.tipo}</span>
-                        <span className="text-[11px] text-blue-400 font-black mt-0.5 block">
+                        <h4 className="text-white font-bold text-xs sm:text-sm truncate">{item.nombre}</h4>
+                        <span className="text-[11px] text-gray-400 block">{item.tipo}</span>
+                        <span className="text-xs sm:text-sm text-blue-400 font-black mt-0.5 block">
                           ${item.precio * item.cantidad} MXN
                         </span>
                       </div>
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        <div className="flex items-center border border-white/10 rounded overflow-hidden bg-black/40">
+                      <div className="flex items-center gap-2 shrink-0">
+                        <div className="flex items-center border border-white/10 rounded-lg overflow-hidden bg-black/40">
                           <button
                             onClick={() => actualizarCantidad(item.id, item.cantidad - 1)}
-                            className="px-1.5 py-0.5 text-xs text-gray-400 hover:text-white"
+                            className="px-2 py-1 text-xs text-gray-400 hover:text-white"
                           >
                             -
                           </button>
-                          <span className="px-1 text-xs font-bold text-white">{item.cantidad}</span>
+                          <span className="px-1.5 text-xs font-bold text-white">{item.cantidad}</span>
                           <button
                             onClick={() => actualizarCantidad(item.id, item.cantidad + 1)}
-                            className="px-1.5 py-0.5 text-xs text-gray-400 hover:text-white"
+                            className="px-2 py-1 text-xs text-gray-400 hover:text-white"
                           >
                             +
                           </button>
                         </div>
                         <button
                           onClick={() => eliminarDelCarrito(item.id)}
-                          className="text-gray-500 hover:text-red-400 p-0.5 text-xs"
+                          className="text-gray-500 hover:text-red-400 p-1 text-sm"
                         >
                           🗑️
                         </button>
@@ -485,20 +487,20 @@ export default function Home() {
             </div>
 
             {carrito.length > 0 && (
-              <div className="border-t border-white/10 pt-3 space-y-2">
-                <div className="flex justify-between items-center text-xs">
+              <div className="border-t border-white/10 pt-3.5 space-y-2.5">
+                <div className="flex justify-between items-center text-sm">
                   <span className="text-gray-400 uppercase font-bold">Total:</span>
-                  <span className="text-base font-black text-white">${totalCalculado} MXN</span>
+                  <span className="text-lg font-black text-white">${totalCalculado} MXN</span>
                 </div>
                 <button
                   onClick={enviarPedidoCompletoWhatsApp}
-                  className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-black uppercase text-[11px] rounded-lg tracking-wider transition-colors shadow-md shadow-blue-600/30 active:scale-95"
+                  className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-black uppercase text-xs sm:text-sm rounded-xl tracking-wider transition-colors shadow-md shadow-blue-600/30 active:scale-95"
                 >
                   Finalizar Pedido vía WhatsApp
                 </button>
                 <button
                   onClick={vaciarCarrito}
-                  className="w-full py-1 text-[9px] text-gray-500 hover:text-gray-300 text-center transition-colors"
+                  className="w-full py-1 text-xs text-gray-500 hover:text-gray-300 text-center transition-colors"
                 >
                   Vaciar carrito
                 </button>
