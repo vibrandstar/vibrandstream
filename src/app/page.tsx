@@ -43,7 +43,7 @@ export default function Home() {
 
   const numeroWhatsApp = "529141384914";
   const clabeNu = "638180000123456789";
-  const titularNu = "VIBRANDSTREAM / GERARDO CUSTODIO";
+  const titularNu = "GERARDO CUSTODIO";
 
   useEffect(() => {
     const obtenerProductos = async () => {
@@ -63,15 +63,15 @@ export default function Home() {
     obtenerProductos();
   }, []);
 
-  // ÚNICAS CATEGORÍAS VÁLIDAS
+  // Categorías fijas obligatorias
   const categorias = ["Todos", "Perfil", "Completa", "Música", "Herramientas"];
 
-  // 3 Productos destacados
+  // 3 Productos destacados fijados
   const productosDestacados = useMemo(() => {
     return productos.filter((p) => p.destacado).slice(0, 3);
   }, [productos]);
 
-  // Filtro estricto por categoría seleccionada o Todos
+  // Filtro exacto por categoría
   const productosFiltrados = useMemo(() => {
     return productos.filter((producto) => {
       const q = busqueda.toLowerCase().trim();
@@ -85,7 +85,6 @@ export default function Home() {
       const coincideCategoria =
         categoriaSeleccionada === "Todos" ||
         (producto.categoria && producto.categoria.toLowerCase() === categoriaSeleccionada.toLowerCase()) ||
-        // Soporte de compatibilidad para productos que aún no se hayan editado
         (categoriaSeleccionada === "Perfil" && producto.tipo?.toLowerCase().includes("perfil")) ||
         (categoriaSeleccionada === "Completa" && producto.tipo?.toLowerCase().includes("completa"));
 
@@ -100,7 +99,7 @@ export default function Home() {
   };
 
   const enviarComprobanteWhatsApp = () => {
-    const mensaje = `👋 ¡Hola VibrandStream! Acabo de realizar una transferencia vía SPEI a tu cuenta Nu México.\nAdjunto comprobante de pago para mi entrega.`;
+    const mensaje = `👋 ¡Hola VibrandStream! Acabo de realizar una transferencia vía SPEI a tu cuenta Nu México a nombre de ${titularNu}.\nAdjunto comprobante de pago para mi entrega.`;
     window.open(`https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensaje)}`, "_blank");
   };
 
@@ -115,7 +114,7 @@ export default function Home() {
     carrito.forEach((item, i) => {
       mensaje += `${i + 1}. *${item.nombre}* (${item.tipo} - ${item.suscripcion})\n   Cant: ${item.cantidad} | Subtotal: $${item.precio * item.cantidad} MXN\n`;
     });
-    mensaje += `\n━━━━━━━━━━━━━━━━━━━━━\n💰 *TOTAL A PAGAR: $${totalCalculado} MXN*\n💳 Pago por SPEI Nu México.\n\n¿Me confirmas disponibilidad?`;
+    mensaje += `\n━━━━━━━━━━━━━━━━━━━━━\n💰 *TOTAL A PAGAR: $${totalCalculado} MXN*\n💳 Pago por SPEI Nu México (${titularNu}).\n\n¿Me confirmas disponibilidad?`;
     window.open(`https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensaje)}`, "_blank");
   };
 
@@ -177,7 +176,7 @@ export default function Home() {
       </header>
 
       {/* CONTENIDO PRINCIPAL */}
-      <main className="max-w-5xl mx-auto w-full px-4 sm:px-6 pt-5 pb-14 flex-1 space-y-6 sm:space-y-8">
+      <main className="max-w-5xl mx-auto w-full px-4 sm:px-6 pt-5 pb-14 flex-1 space-y-7 sm:space-y-9">
         
         {/* HERO Y BUSCADOR */}
         <section className="text-center space-y-2.5 pt-1 max-w-lg mx-auto w-full">
@@ -213,51 +212,97 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 3 PRODUCTOS DESTACADOS */}
+        {/* 3 PRODUCTOS DESTACADOS EN GRANDE */}
         {productosDestacados.length > 0 && !busqueda && categoriaSeleccionada === "Todos" && (
-          <section className="space-y-3 bg-[#0c0c0c] border border-blue-500/20 p-4 sm:p-5 rounded-2xl">
-            <div className="flex items-center gap-2">
-              <span className="text-base sm:text-lg">⭐</span>
-              <h2 className="text-xs sm:text-sm font-black uppercase tracking-wider text-white">
-                Plataformas Más Populares
-              </h2>
+          <section className="space-y-4">
+            <div className="flex items-center justify-between px-1">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🔥</span>
+                <h2 className="text-base sm:text-lg font-black uppercase tracking-wider text-white">
+                  Plataformas Más Populares
+                </h2>
+              </div>
+              <span className="text-xs text-blue-400 font-bold uppercase tracking-wider hidden sm:inline">
+                Recomendadas
+              </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {productosDestacados.map((prod) => (
                 <div
                   key={prod.id}
-                  className="bg-[#141414] border border-white/10 hover:border-blue-500/40 rounded-xl p-3 flex sm:flex-col items-center gap-3 transition-colors"
+                  className="relative group bg-gradient-to-b from-[#151515] to-[#0d0d0d] border border-blue-500/30 hover:border-blue-500/70 rounded-2xl overflow-hidden flex flex-col justify-between transition-all duration-300 shadow-xl shadow-black/60"
                 >
-                  <img
-                    src={prod.imagenUrl}
-                    alt={prod.nombre}
-                    className="w-16 h-16 sm:w-full sm:h-28 object-cover rounded-lg shrink-0 bg-black"
-                  />
-                  <div className="flex-1 min-w-0 sm:text-center w-full">
-                    <span className="text-[10px] text-blue-400 font-bold uppercase tracking-wider block">
+                  {/* Badge Destacado */}
+                  <div className="absolute top-3 right-3 z-20 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1">
+                    <span>⭐</span> Top Ventas
+                  </div>
+
+                  {/* Imagen Grande */}
+                  <Link
+                    href={`/producto/${prod.id}`}
+                    className="block relative aspect-[16/10] sm:aspect-square w-full bg-[#1b1b1b] overflow-hidden"
+                  >
+                    {!prod.disponible && (
+                      <div className="absolute inset-0 bg-black/80 z-10 flex items-center justify-center">
+                        <span className="bg-red-600 text-white text-xs font-black px-3 py-1 uppercase tracking-widest rounded-lg">
+                          Agotado
+                        </span>
+                      </div>
+                    )}
+                    <img
+                      src={prod.imagenUrl}
+                      alt={prod.nombre}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d0d] via-transparent to-transparent opacity-80" />
+                    <span className="absolute bottom-3 left-3 z-10 text-[11px] font-black uppercase tracking-wider bg-black/85 text-blue-400 px-2.5 py-1 rounded-lg border border-white/10">
                       {prod.tipo}
                     </span>
-                    <h3 className="font-bold text-xs sm:text-sm text-white truncate mt-0.5">
-                      {prod.nombre}
-                    </h3>
-                    <div className="text-xs sm:text-sm font-black text-white mt-1">
-                      ${prod.precio} MXN
+                  </Link>
+
+                  {/* Detalles Grandes */}
+                  <div className="p-4 flex flex-col justify-between flex-1 gap-3">
+                    <div>
+                      <span className="text-xs text-gray-400 block font-medium">
+                        ⏱️ {prod.suscripcion}
+                      </span>
+                      <Link href={`/producto/${prod.id}`}>
+                        <h3 className="text-base sm:text-lg font-black text-white leading-tight mt-1 group-hover:text-blue-400 transition-colors line-clamp-1">
+                          {prod.nombre}
+                        </h3>
+                      </Link>
+                      {prod.descripcion && (
+                        <p className="text-xs text-gray-400 mt-1 line-clamp-2 leading-relaxed">
+                          {prod.descripcion}
+                        </p>
+                      )}
                     </div>
 
-                    <div className="grid grid-cols-2 gap-1.5 mt-2">
-                      <button
-                        onClick={() => agregarAlCarrito(prod)}
-                        className="bg-white/5 hover:bg-white/10 text-white text-[10px] font-bold py-1.5 rounded-lg border border-white/10"
-                      >
-                        + Carro
-                      </button>
-                      <button
-                        onClick={() => comprarProductoDirecto(prod)}
-                        className="bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-black py-1.5 rounded-lg"
-                      >
-                        Comprar
-                      </button>
+                    <div className="pt-3 border-t border-white/[0.08] space-y-2.5">
+                      <div className="flex items-baseline justify-between">
+                        <span className="text-xs text-gray-400 uppercase font-bold">Precio Oficial:</span>
+                        <div className="text-lg sm:text-xl font-black text-white">
+                          ${prod.precio} <span className="text-xs text-gray-400 font-normal">MXN</span>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          onClick={() => agregarAlCarrito(prod)}
+                          disabled={!prod.disponible}
+                          className="bg-white/10 hover:bg-white/20 text-white border border-white/15 py-2.5 text-xs font-bold rounded-xl transition-all active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
+                        >
+                          + Carro
+                        </button>
+                        <button
+                          onClick={() => comprarProductoDirecto(prod)}
+                          disabled={!prod.disponible}
+                          className="bg-blue-600 hover:bg-blue-500 text-white py-2.5 text-xs font-black uppercase tracking-wider rounded-xl transition-all active:scale-95 disabled:opacity-30 disabled:pointer-events-none shadow-md shadow-blue-600/40"
+                        >
+                          Comprar Ya
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -266,14 +311,14 @@ export default function Home() {
           </section>
         )}
 
-        {/* SELECTOR DE CATEGORÍAS (TODOS + 4 CATEGORÍAS) */}
+        {/* SELECTOR DE CATEGORÍAS */}
         <section className="w-full overflow-x-auto no-scrollbar py-1">
           <div className="flex items-center justify-start sm:justify-center gap-2 min-w-max px-0.5">
             {categorias.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setCategoriaSeleccionada(cat)}
-                className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider transition-all shrink-0 ${
+                className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider transition-all shrink-0 ${
                   categoriaSeleccionada === cat
                     ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
                     : "bg-[#121212] text-gray-400 hover:text-white border border-white/5"
@@ -285,8 +330,17 @@ export default function Home() {
           </div>
         </section>
 
-        {/* CATÁLOGO GENERAL */}
-        <section className="w-full">
+        {/* CATÁLOGO GENERAL EN 2 COLUMNAS */}
+        <section className="w-full space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <h2 className="text-sm sm:text-base font-black uppercase tracking-wider text-gray-300">
+              {categoriaSeleccionada === "Todos" ? "Todas las Plataformas" : `Categoría: ${categoriaSeleccionada}`}
+            </h2>
+            <span className="text-xs text-gray-500">
+              {productosFiltrados.length} servicio{productosFiltrados.length === 1 ? "" : "s"}
+            </span>
+          </div>
+
           {cargando ? (
             <div className="py-16 text-center text-gray-500 font-mono text-xs sm:text-sm uppercase tracking-widest animate-pulse">
               Cargando catálogo...
@@ -447,7 +501,7 @@ export default function Home() {
               </div>
               <div>
                 <span className="text-[10px] text-gray-500 block font-sans font-bold uppercase">Beneficiario:</span>
-                <span className="text-gray-300 text-xs">{titularNu}</span>
+                <span className="text-gray-200 font-bold text-xs">{titularNu}</span>
               </div>
               <div>
                 <span className="text-[10px] text-gray-500 block font-sans font-bold uppercase">CLABE Interbancaria:</span>
