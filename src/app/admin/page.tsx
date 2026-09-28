@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { db, auth } from "@/lib/firebase";
 import {
   collection,
@@ -58,6 +58,7 @@ export default function AdminPage() {
 
   // Procesamiento de imagen
   const [procesandoImagen, setProcesandoImagen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const categoriasDisponibles = ["Perfil", "Completa", "Música", "Herramientas"];
 
@@ -107,7 +108,7 @@ export default function AdminPage() {
     }
   };
 
-  // Procesa y comprime cualquier foto de la galería directamente
+  // Procesa y comprime cualquier foto elegida de la galería
   const handleSeleccionarFoto = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -141,7 +142,6 @@ export default function AdminPage() {
         const ctx = canvas.getContext("2d");
         ctx?.drawImage(img, 0, 0, width, height);
 
-        // Genera imagen optimizada y ligera
         const dataUrl = canvas.toDataURL("image/webp", 0.85);
         setImagenUrl(dataUrl);
         setProcesandoImagen(false);
@@ -163,6 +163,9 @@ export default function AdminPage() {
     setImagenUrl("");
     setDisponible(true);
     setDestacado(false);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const prepararEdicion = (prod: Producto) => {
@@ -182,7 +185,7 @@ export default function AdminPage() {
   const guardarProducto = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nombre || precio === "" || !imagenUrl) {
-      alert("Por favor completa nombre, precio y selecciona una imagen.");
+      alert("Por favor completa nombre, precio y selecciona una foto de tu galería.");
       return;
     }
 
@@ -435,59 +438,74 @@ export default function AdminPage() {
               </div>
             </div>
 
-            {/* FOTO DESDE GALERÍA O ENLACE */}
-            <div className="bg-[#141414] border border-white/10 rounded-xl p-3.5 space-y-3">
+            {/* SELECCIÓN DE FOTO DIRECTA DE LA GALERÍA (SIN CAMPOS DE URL) */}
+            <div className="bg-[#141414] border border-white/10 rounded-xl p-4 space-y-3">
               <label className="block text-[11px] font-bold uppercase tracking-wider text-blue-400">
-                Imagen del Producto
+                Foto del Producto (Desde tu Galería)
               </label>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
-                <div>
-                  <span className="text-[10px] text-gray-300 block mb-1 font-semibold uppercase">
-                    📷 Elegir de la Galería / Fotos
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleSeleccionarFoto}
+                className="hidden"
+                id="input-galeria-foto"
+              />
+
+              {!imagenUrl ? (
+                <label
+                  htmlFor="input-galeria-foto"
+                  className="border-2 border-dashed border-white/20 hover:border-blue-500 bg-[#1c1c1c] hover:bg-[#222222] p-6 rounded-2xl flex flex-col items-center justify-center gap-2 cursor-pointer transition-all"
+                >
+                  <span className="text-3xl">📷</span>
+                  <span className="text-sm font-bold text-white text-center">
+                    Toca aquí para elegir foto de tu galería
                   </span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleSeleccionarFoto}
-                    className="w-full text-xs text-gray-300 file:mr-2.5 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-500 file:cursor-pointer bg-[#1c1c1c] p-1.5 rounded-xl border border-white/10"
-                  />
+                  <span className="text-[11px] text-gray-400 text-center">
+                    PNG, JPG, WEBP — Se optimiza automáticamente
+                  </span>
                   {procesandoImagen && (
-                    <span className="text-[10px] text-blue-400 font-bold block mt-1 animate-pulse">
-                      Optimizando imagen...
+                    <span className="text-xs text-blue-400 font-bold animate-pulse mt-1">
+                      Cargando y optimizando imagen...
                     </span>
                   )}
-                </div>
+                </label>
+              ) : (
+                <div className="bg-[#1a1a1a] p-3 rounded-xl border border-blue-500/40 flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={imagenUrl}
+                      alt="Vista previa"
+                      className="w-16 h-16 object-cover rounded-xl bg-black border border-white/10"
+                    />
+                    <div>
+                      <span className="text-xs text-green-400 font-bold block">
+                        ✓ Foto lista para el producto
+                      </span>
+                      <span className="text-[11px] text-gray-400">
+                        Cargada desde tu galería
+                      </span>
+                    </div>
+                  </div>
 
-                <div>
-                  <span className="text-[10px] text-gray-400 block mb-1 font-semibold uppercase">
-                    O pegar URL externa (Opcional)
-                  </span>
-                  <input
-                    type="url"
-                    placeholder="https://..."
-                    value={imagenUrl.startsWith("data:") ? "" : imagenUrl}
-                    onChange={(e) => setImagenUrl(e.target.value)}
-                    className="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
-                  />
-                </div>
-              </div>
-
-              {/* Vista previa inmediata */}
-              {imagenUrl && (
-                <div className="flex items-center gap-3 pt-2 border-t border-white/5">
-                  <img
-                    src={imagenUrl}
-                    alt="Vista previa"
-                    className="w-14 h-14 object-cover rounded-xl bg-black border border-blue-500/40"
-                  />
-                  <div>
-                    <span className="text-xs text-green-400 font-bold block">
-                      ✓ Foto cargada con éxito
-                    </span>
-                    <span className="text-[10px] text-gray-500">
-                      Lista para mostrarse en la tienda
-                    </span>
+                  <div className="flex items-center gap-2">
+                    <label
+                      htmlFor="input-galeria-foto"
+                      className="cursor-pointer bg-white/10 hover:bg-white/20 text-white text-xs font-bold px-3 py-2 rounded-lg transition-colors"
+                    >
+                      Cambiar
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setImagenUrl("");
+                        if (fileInputRef.current) fileInputRef.current.value = "";
+                      }}
+                      className="bg-red-600/20 hover:bg-red-600/40 text-red-400 text-xs font-bold px-3 py-2 rounded-lg transition-colors"
+                    >
+                      Quitar
+                    </button>
                   </div>
                 </div>
               )}
@@ -537,7 +555,13 @@ export default function AdminPage() {
                 disabled={guardando || procesandoImagen}
                 className="bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-wider text-xs px-6 py-2.5 rounded-xl transition-all shadow-md active:scale-95 disabled:opacity-50"
               >
-                {guardando ? "Guardando..." : editandoId ? "Actualizar Producto" : "Registrar Producto"}
+                {guardando
+                  ? "Guardando..."
+                  : procesandoImagen
+                  ? "Optimizando foto..."
+                  : editandoId
+                  ? "Actualizar Producto"
+                  : "Registrar Producto"}
               </button>
 
               {editandoId && (
